@@ -4,7 +4,7 @@ TXID="37d966a263350fe747f1c606b159987545844a493dd38d84b070027a895c4517"
 # Step 1: Get the raw transaction details
 RAW_TX=$(bitcoin-cli getrawtransaction "$TXID" true)
 # Step 2: Extract public keys from the txinwitness field
-PUBKEYS=$(echo "$RAW_TX" | jq -r '.vin[].txinwitness[]' | awk 'length($0) == 66 || length($0) == 130' | sort -u)
+PUBKEYS=$(echo "$RAW_TX" | jq -r '.vin[].txinwitness[]' | awk 'length($0) == 66 && ($0 ~ /^02/ || $0 ~ /^03/) { print }')
 # Step 3: Format public keys into a JSON array
 PUBKEYS_JSON=$(echo "$PUBKEYS" | jq -R . | jq -s .)
 # Step 4: Build the multisig redeem script
