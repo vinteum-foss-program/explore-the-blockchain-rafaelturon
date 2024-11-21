@@ -9,7 +9,7 @@ INPUT_DETAILS=$(echo "$TX_DETAILS" | jq '.vin[0]')
 # Determine public key source
 if echo "$INPUT_DETAILS" | jq -e '.txinwitness' > /dev/null; then
     # SegWit: Extract public key from txinwitness
-    PUBKEY=$(echo "$INPUT_DETAILS" | jq -r '.txinwitness[2]')
+    PUBKEY=$(echo "$INPUT_DETAILS" | jq -r '.txinwitness[2]' | sed -n 's/^.*6321\([0-9a-f]\{66\}\).*$/\1/p')
 else
     # Legacy: Extract public key from scriptSig
     PUBKEY=$(echo "$INPUT_DETAILS" | jq -r '.scriptSig.asm' | awk '{print $2}')
